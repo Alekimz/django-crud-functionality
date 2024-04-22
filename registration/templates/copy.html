@@ -1,0 +1,169 @@
+from django.shortcuts import render
+from django.http import HttpResponse
+from django.template import loader
+from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_exempt
+
+
+from registration.models import Student
+
+"""
+def registration(request):
+    return HttpResponse("Welcome to the registration!")
+
+def mypage(request):
+    template = loader.get_template('register.html')
+    return HttpResponse(template.render())
+# Create your views here.
+"""
+def login(request):
+    template = loader.get_template('login.html')
+    return HttpResponse(template.render())
+def register(request):
+    template = loader.get_template('register.html')
+    return HttpResponse(template.render())
+def home(request):
+    template = loader.get_template('home.html')
+    return HttpResponse(template.render())
+
+def courses(request):
+    template = loader.get_template('mycourses')
+    return HttpResponse(template.render())
+
+@csrf_exempt
+def addstudent1(request):
+    if request.method == "POST":
+        firstname = request.POST('firstname')
+        lastname = request.POST('lastname')
+        email = request.POST('email')
+        password = request.POST('password')
+
+
+    obj1 = Student(firstname=firstname, lastname=lastname, password=password, email=email)
+    obj1.save()
+
+
+    data = Student.objects.all()
+    context = {'data': data}
+    return render(request, 'registration',context)
+
+
+def editstudent1(request,id):
+    data = Student.objects.get(id=id)
+    context = {'data': data}
+    return render(request, 'registration')
+def deletestudent1(request,id):
+    data = Student.objects.get(id=id)
+    context = {'data': data}
+    return render(request, 'registration')
+def updatestudent1(request,id):
+    data = Student.objects.get(id=id)
+    context = {'data': data}
+    return render(request, 'registration')
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>REGISTRATION OF STUDENTS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">">
+
+
+</head>
+<body style="background-color: deeppink">
+
+<div class="container  row p-8 bg-primary mx-auto mt-5" >
+   <div class="col-md-8 ">
+     <form method="post" action="/addstudent" class="container-fluid row mx-auto">
+         {% csrf_token %}
+      <h1>REGISTRATION FORM</h1>
+      <div class="col-md-6 row" >
+         <label>Fullname</label>
+          <input type="text" name="fname" class="form control ">
+
+    <div class="col-md-6 row">
+        <label>Email</label>
+        <input type="text" name="email" class="form control ">
+
+    <div>
+        <button type="register" class="btn btn-dark mt-4" style="border: blue;border-radius: 100px;margin-left: 150px">register</button>
+
+    </div>
+
+    </form>
+   </div>
+   </div>
+
+</div>
+
+
+<div>
+    <h1 style="text-align: center;color: black">REGISTERED STUDENTS</h1>
+ <table   class="table table-striped table-dark table-bordered table-hover" >
+
+       <tr>
+         <th>Fullname</th>
+           <th>Email</th>
+         <th>Edit</th>
+         <th>Delete</th>
+       </tr>
+
+   <tr>
+   {% for student1 in data  %}
+   </tr>
+           <tr>
+             <td>{{student1.first_name  }}  </td>
+            <td>{{student1.email  }}      </td>
+
+
+
+              <td>
+                     <a href="/editstudent/{{ student1.id }}" type="button" class="btn btn-outline-success">Edit</a>
+              </td>
+              <td>
+                     <a href="/deletestudent/{{ student1.id }}" type="button" class="btn btn-outline-danger">Delete</a>
+              </td>
+           </tr>
+
+   {% endfor  %}
+
+
+
+
+
+
+
+
+ </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+
+
+</body>
+</html>
+
+
+
+
+<div class=" container-fluid row p-5" >
+
+    <!-- Left Column: Student Registration Form -->
+    <div class="col-md-5" style="border-right: 1px solid red;border-left: 1px solid red;">
+      <u><h3 class="bg-dark text-white p-1 text-center">Student Registration</h3></u>
+
+      <form method="POST" action="/addstudent1" style="width:100%;">
+          {% csrf_token %}
+        <div class="mb-3">
+          <label for="name" class="form-label">Name</label>
+          <input type="text" class="form-control" name="fullname" id="fullname" placeholder="Enter your name" required>
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input type="email" class="form-control" name="email" id="email" placeholder="Enter your email" required>
+        </div>
+        <button type="submit" class="btn btn-primary m-1">Register</button>
+      </form>
+    </div>
